@@ -8,7 +8,7 @@ using CppAD::AD;
 
 // TODO: Set the timestep length and duration
 size_t N =10;
-double dt = 0.1;
+double dt = 0.05;
 
 // This value assumes the model presented in the classroom is used.
 //
@@ -58,24 +58,24 @@ class FG_eval {
     // The part of the cost based on the reference state.
     for (size_t t = 0; t < N; t++) 
     {
-      fg[0] += 3000*CppAD::pow(vars[cte_start + t], 2);
-      fg[0] += 30000*CppAD::pow(vars[epsi_start + t], 2);
-      fg[0] += CppAD::pow(vars[v_start + t] - ref_v, 2);
+      fg[0] += 5*CppAD::pow(vars[cte_start + t], 2);
+      fg[0] += 5*CppAD::pow(vars[epsi_start + t], 2);
+      fg[0] += 5*CppAD::pow(vars[v_start + t] - ref_v, 2);
     }
 
     // Minimize the use of actuators.
     for (size_t t = 0; t < N - 1; t++)
     {
-      fg[0] += 100*CppAD::pow(vars[delta_start + t], 2);
-      fg[0] += 100*CppAD::pow(vars[a_start + t], 2);
+      fg[0] += 2*CppAD::pow(vars[delta_start + t], 2);
+      fg[0] += 2*CppAD::pow(vars[a_start + t], 2);
       fg[0] += 2*CppAD::pow(vars[delta_start + t] * vars[v_start+t], 2);
     }
 
     // Minimize the value gap between sequential actuations.
     for (size_t t = 0; t < N - 2; t++) 
     {
-      fg[0] += 300000*CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
-      fg[0] += 1000*CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
+      fg[0] +=5*CppAD::pow(vars[delta_start + t + 1] - vars[delta_start + t], 2);
+      fg[0] += CppAD::pow(vars[a_start + t + 1] - vars[a_start + t], 2);
     }
 
     
@@ -226,19 +226,19 @@ vector<double> MPC::Solve(Eigen::VectorXd state, Eigen::VectorXd coeffs) {
   // degrees (values in radians).
   for (size_t i = delta_start; i < a_start; i++) 
   {
-    vars_lowerbound[i] = -1.0;
-    vars_upperbound[i] = 1.0;
-    //vars_lowerbound[i] = -0.436332;
-    //vars_upperbound[i] = 0.436332;
+    //vars_lowerbound[i] = -1.0;
+    //vars_upperbound[i] = 1.0;
+    vars_lowerbound[i] = -0.436332;
+    vars_upperbound[i] = 0.436332;
   }
 
   // Acceleration/decceleration upper and lower limits.
   for (size_t i = a_start; i < n_vars; i++) 
   {
-    vars_lowerbound[i] = -0.436332;
-    vars_upperbound[i] = 0.436332;
-    //vars_lowerbound[i] = -1.0;
-    //vars_upperbound[i] = 1.0;
+    //vars_lowerbound[i] = -0.436332;
+    //vars_upperbound[i] = 0.436332;
+    vars_lowerbound[i] = -1.0;
+    vars_upperbound[i] = 1.0;
   }
 
 

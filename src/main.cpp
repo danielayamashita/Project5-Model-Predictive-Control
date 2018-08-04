@@ -177,7 +177,7 @@ int main() {
           double psi_state = psi0 - ( v * delta * delay / 2.67 );
           double v_state = v + a * delay;
           double cte_state = cte0 + ( v * sin(epsi0) * delay );
-          double epsi_state = epsi0 - ( v * atan(coeffs[1]) * delay /2.67 );
+          double epsi_state = epsi0 - ( v * delta * delay /2.67 );
           Eigen::VectorXd state(6);
           state << x_state, y_state, psi_state, v_state, cte_state, epsi_state; //px = 0; py = 0 and psi = 0, because the axis were changed to the car's coordinate
           //state << x0,y0,psi0,v,cte0,epsi0;
